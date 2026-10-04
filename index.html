@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UK Visa Expert System</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f0f2f5;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+      .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+      }
+      h2 {
+        text-align: center;
+        color: #005ea5;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      button {
+        width: 100%;
+        background: #005ea5;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: 0.3s;
+      }
+      button:hover {
+        background: #004080;
+      }
+      .result-box {
+        display: none;
+        background: #e6f2ff;
+        padding: 20px;
+        border-left: 5px solid #005ea5;
+        margin-top: 25px;
+        border-radius: 5px;
+      }
+      .result-box h3 {
+        margin-top: 0;
+        color: #005ea5;
+      }
+      .conditional {
+        display: none;
+      } /* Hides fields until relevant */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>UK Visa Eligibility Assessment</h2>
+
+      <form id="visaForm">
+        <!-- Core Questions -->
+        <div class="form-group">
+          <label>1. Do you have a severe criminal record?</label>
+          <select name="criminal_record" required>
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>2. Have you ever hidden a previous visa refusal?</label>
+          <select name="previous_refusal_hidden" required>
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>3. What is the main purpose of your visit?</label>
+          <select
+            name="purpose"
+            id="purpose"
+            onchange="showRelevantFields()"
+            required
+          >
+            <option value="" disabled selected>Select purpose...</option>
+            <option value="tourism">Tourism</option>
+            <option value="visit_family">Visit Family</option>
+            <option value="medical">Medical Treatment</option>
+            <option value="study">Study</option>
+            <option value="work">Work</option>
+            <option value="transit">Transit</option>
+            <option value="join_family">Join Family Permanent</option>
+          </select>
+        </div>
+
+        <!-- Conditional: Duration (Common) -->
+        <div class="form-group conditional" id="dur_field">
+          <label>Will your stay be over 6 months?</label>
+          <select name="duration_over_6_months">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+
+        <!-- Conditional: Study -->
+        <div class="conditional" id="study_fields">
+          <div class="form-group">
+            <label>Are you 16 years of age or older?</label>
+            <select name="age_over_16">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Course Type:</label>
+            <select name="course_type">
+              <option value="higher_education">Higher Education</option>
+              <option value="independent_school">Independent School</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Proof of English?</label>
+            <select name="english_proof">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Proof of Finances?</label>
+            <select name="financial_proof">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Conditional: Work -->
+        <div class="conditional" id="work_fields">
+          <div class="form-group">
+            <label>Confirmed Job Offer?</label>
+            <select name="job_offer">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Licensed Employer Sponsor?</label>
+            <select name="employer_sponsorship">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Work Type (if under 6 months):</label>
+            <select name="work_type">
+              <option value="none">N/A</option>
+              <option value="charity">Charity</option>
+              <option value="creative">Creative</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Conditional: Transit -->
+        <div class="conditional" id="transit_fields">
+          <div class="form-group">
+            <label>Passing through UK Border Control?</label>
+            <select name="border_control">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Conditional: Family -->
+        <div class="conditional" id="family_fields">
+          <div class="form-group">
+            <label>Family Member Status:</label>
+            <select name="family_status">
+              <option value="uk_citizen">UK Citizen</option>
+              <option value="temporary_resident">Temporary Resident</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Relationship:</label>
+            <select name="relationship">
+              <option value="spouse">Spouse</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" onclick="submitForm()">Assess Eligibility</button>
+      </form>
+
+      <div class="result-box" id="resultBox">
+        <h3>Assessment Result</h3>
+        <p><strong>Recommended Pathway:</strong> <span id="out_path"></span></p>
+        <p><strong>Rule Triggered:</strong> <span id="out_rule"></span></p>
+      </div>
+    </div>
+
+    <script>
+      // Logic to show/hide form fields dynamically based on the purpose chosen
+      function showRelevantFields() {
+        const purpose = document.getElementById("purpose").value;
+        document
+          .querySelectorAll(".conditional")
+          .forEach((el) => (el.style.display = "none"));
+
+        if (
+          ["tourism", "visit_family", "medical", "study", "work"].includes(
+            purpose,
+          )
+        ) {
+          document.getElementById("dur_field").style.display = "block";
+        }
+        if (purpose === "study")
+          document.getElementById("study_fields").style.display = "block";
+        if (purpose === "work")
+          document.getElementById("work_fields").style.display = "block";
+        if (purpose === "transit")
+          document.getElementById("transit_fields").style.display = "block";
+        if (purpose === "join_family")
+          document.getElementById("family_fields").style.display = "block";
+      }
+
+      // Gathers form data, sends JSON to Prolog, and displays result
+      async function submitForm() {
+        const formData = new FormData(document.getElementById("visaForm"));
+        const dict = {};
+        formData.forEach((value, key) => (dict[key] = value));
+
+        const response = await fetch("/api/assess", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dict),
+        });
+
+        const data = await response.json();
+        document.getElementById("out_path").innerText = data.outcome;
+        document.getElementById("out_rule").innerText = data.rule;
+        document.getElementById("resultBox").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
